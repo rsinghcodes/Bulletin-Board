@@ -25,7 +25,10 @@ function Header() {
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
           />
-          <Link href="https://github.com/rsinghcodes/" isExternal>
+          <Link
+            href="https://github.com/rsinghcodes/Bulletin-Board/"
+            isExternal
+          >
             <IconButton aria-label="Github link" icon={<LinkIcon />} ml={2} />
           </Link>
         </Box>

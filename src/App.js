@@ -6,7 +6,6 @@ import {
   Flex,
   Box,
   CloseButton,
-  Center,
 } from "@chakra-ui/react";
 import Header from "./components/Header";
 import { v4 as uuidv4 } from "uuid";
@@ -76,9 +75,9 @@ function App() {
               Save
             </Button>
           </Flex>
-          <Center mt={2} h="40px" borderWidth="1px">
+          {/* <Center mt={2} h="40px" borderWidth="1px">
             Adjust the position of the card by dragging.
-          </Center>
+          </Center> */}
         </Box>
 
         {items.map((item, index) => {
@@ -93,11 +92,12 @@ function App() {
               <Box
                 maxW="xs"
                 borderWidth="1px"
-                borderRadius="md"
+                borderRadius="sm"
                 overflow="hidden"
                 p="2"
                 bg={item.color}
                 color="gray.900"
+                style={{ cursor: "move" }}
               >
                 <Flex justify="flex-end">
                   <CloseButton size="sm" onClick={(e) => deleteNote(item.id)} />
