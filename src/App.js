@@ -75,9 +75,6 @@ function App() {
               Save
             </Button>
           </Flex>
-          {/* <Center mt={2} h="40px" borderWidth="1px">
-            Adjust the position of the card by dragging.
-          </Center> */}
         </Box>
 
         {items.map((item, index) => {
