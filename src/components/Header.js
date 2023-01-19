@@ -1,14 +1,15 @@
-import React from "react";
-import { MoonIcon, SunIcon, LinkIcon } from "@chakra-ui/icons";
+import React from 'react';
+import { MoonIcon, SunIcon, LinkIcon } from '@chakra-ui/icons';
 import {
   useColorMode,
   Flex,
   Spacer,
   Heading,
   Box,
-  Link,
   IconButton,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
+import Login from './Login';
+import Register from './Register';
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -22,15 +23,11 @@ function Header() {
         <Box>
           <IconButton
             aria-label="Toggle dark or light mode"
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
           />
-          <Link
-            href="https://github.com/rsinghcodes/Bulletin-Board/"
-            isExternal
-          >
-            <IconButton aria-label="Github link" icon={<LinkIcon />} ml={2} />
-          </Link>
+          <Login />
+          <Register />
         </Box>
       </Flex>
     </header>
