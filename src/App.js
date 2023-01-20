@@ -1,111 +1,53 @@
-import { useState, useEffect } from "react";
+import { lazy, Suspense } from 'react';
+import { Container, Progress } from '@chakra-ui/react';
+import { Toaster } from 'react-hot-toast';
 import {
-  Container,
-  Input,
-  Button,
-  Flex,
-  Box,
-  CloseButton,
-} from "@chakra-ui/react";
-import Header from "./components/Header";
-import { v4 as uuidv4 } from "uuid";
-import Draggable from "react-draggable";
-var randomColor = require("randomcolor");
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  HttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { Route, Routes } from 'react-router-dom';
+
+import { AuthProvider } from './context/auth';
+
+import Header from './components/Header';
+const Home = lazy(() => import('./page/Home'));
 
 function App() {
-  const [item, setItem] = useState("");
-  const [items, setItems] = useState(
-    JSON.parse(localStorage.getItem("items")) || []
-  );
-  const [isInvalid, setIsInvalid] = useState(false);
+  const httpLink = new HttpLink({
+    uri: 'http://localhost:4000',
+  });
 
-  const newitem = () => {
-    if (item.trim() !== "") {
-      const newitem = {
-        id: uuidv4(),
-        item: item,
-        color: randomColor({ luminosity: "light" }),
-        defaultPos: { x: 0, y: 20 },
-      };
-      setItems((items) => [...items, newitem]);
-      setItem("");
-    } else {
-      setIsInvalid(true);
-    }
-  };
+  const authLink = setContext(() => {
+    const token = localStorage.getItem('jwtToken');
+    return {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+    };
+  });
 
-  useEffect(() => {
-    localStorage.setItem("items", JSON.stringify(items));
-  }, [items]);
-
-  const updatePos = (data, index) => {
-    let newArray = [...items];
-    newArray[index].defaultPos = { x: data.x, y: data.y };
-    setItems(newArray);
-  };
-
-  const keyPress = (e) => {
-    var code = e.keyCode || e.which;
-    if (code === 13) {
-      newitem();
-    }
-  };
-
-  const deleteNote = (id) => {
-    setItems(items.filter((item) => item.id !== id));
-  };
+  const client = new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  });
 
   return (
-    <>
-      <Container maxW="container.lg">
-        <Header />
-
-        <Box mt={3}>
-          <Flex>
-            <Input
-              isInvalid={isInvalid}
-              errorBorderColor="crimson"
-              value={item}
-              onChange={(e) => setItem(e.target.value)}
-              placeholder="Write something on board"
-              mr={3}
-              onKeyPress={(e) => keyPress(e)}
-            />
-            <Button colorScheme="teal" variant="solid" onClick={newitem}>
-              Save
-            </Button>
-          </Flex>
-        </Box>
-
-        {items.map((item, index) => {
-          return (
-            <Draggable
-              key={item.id}
-              defaultPosition={item.defaultPos}
-              onStop={(e, data) => {
-                updatePos(data, index);
-              }}
-            >
-              <Box
-                maxW="xs"
-                borderWidth="1px"
-                borderRadius="sm"
-                overflow="hidden"
-                p="2"
-                bg={item.color}
-                color="gray.900"
-                style={{ cursor: "move" }}
-              >
-                <Flex justify="flex-end">
-                  <CloseButton size="sm" onClick={(e) => deleteNote(item.id)} />
-                </Flex>
-                <Flex justify="center">{`${item.item}`}</Flex>
-              </Box>
-            </Draggable>
-          );
-        })}
-      </Container>
-    </>
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <Toaster />
+        <Container maxW="container.lg">
+          <Header />
+          <Suspense fallback={<Progress size="xs" isIndeterminate />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+            </Routes>
+          </Suspense>
+        </Container>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }
 
