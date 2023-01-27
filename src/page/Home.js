@@ -2,25 +2,25 @@ import { useState, useEffect } from 'react';
 import { Input, Button, Flex, Box, CloseButton } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
 import Draggable from 'react-draggable';
-var randomColor = require('randomcolor');
+import randomColor from 'randomcolor';
 
 function Home() {
-  const [item, setItem] = useState('');
+  const [content, setContent] = useState('');
   const [items, setItems] = useState(
     JSON.parse(localStorage.getItem('items')) || []
   );
   const [isInvalid, setIsInvalid] = useState(false);
 
   const newitem = () => {
-    if (item.trim() !== '') {
-      const newitem = {
+    if (content.trim() !== '') {
+      const newContent = {
         id: uuidv4(),
-        item: item,
+        content: content,
         color: randomColor({ luminosity: 'light' }),
         defaultPos: { x: 0, y: 20 },
       };
-      setItems((items) => [...items, newitem]);
-      setItem('');
+      setItems((items) => [...items, newContent]);
+      setContent('');
     } else {
       setIsInvalid(true);
     }
@@ -54,8 +54,8 @@ function Home() {
           <Input
             isInvalid={isInvalid}
             errorBorderColor="crimson"
-            value={item}
-            onChange={(e) => setItem(e.target.value)}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             placeholder="Write something on board"
             mr={3}
             onKeyPress={(e) => keyPress(e)}
@@ -88,7 +88,7 @@ function Home() {
               <Flex justify="flex-end">
                 <CloseButton size="sm" onClick={(e) => deleteNote(item.id)} />
               </Flex>
-              <Flex justify="center">{`${item.item}`}</Flex>
+              <Flex justify="center">{item.content}</Flex>
             </Box>
           </Draggable>
         );

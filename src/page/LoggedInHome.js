@@ -154,7 +154,7 @@ const LoggedInHome = () => {
               <Flex justify="flex-end">
                 <DeleteButton contentId={item.id} />
               </Flex>
-              <Flex justify="center">{`${item.content}`}</Flex>
+              <Flex justify="center">{item.content}</Flex>
             </Box>
           </Draggable>
         );
