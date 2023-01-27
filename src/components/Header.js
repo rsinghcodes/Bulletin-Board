@@ -1,5 +1,7 @@
-import React from 'react';
-import { MoonIcon, SunIcon, LinkIcon } from '@chakra-ui/icons';
+import React, { useContext } from 'react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { FiLogOut } from 'react-icons/fi';
+import { BsPerson } from 'react-icons/bs';
 import {
   useColorMode,
   Flex,
@@ -7,12 +9,21 @@ import {
   Heading,
   Box,
   IconButton,
+  Menu,
+  MenuList,
+  MenuItem,
+  MenuButton,
+  MenuDivider,
 } from '@chakra-ui/react';
+
 import Login from './Login';
 import Register from './Register';
+import { AuthContext } from '../context/auth';
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { user, logout } = useContext(AuthContext);
+
   return (
     <header>
       <Flex mt={3}>
@@ -26,8 +37,29 @@ function Header() {
             icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
             onClick={toggleColorMode}
           />
-          <Login />
-          <Register />
+          {user ? (
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label="Options"
+                icon={<BsPerson />}
+                variant="outline"
+                ml={2}
+              />
+              <MenuList>
+                <MenuItem>{user.fullname}</MenuItem>
+                <MenuDivider />
+                <MenuItem icon={<FiLogOut />} onClick={logout}>
+                  Log Out
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <>
+              <Login />
+              <Register />
+            </>
+          )}
         </Box>
       </Flex>
     </header>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -19,9 +19,15 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { useMutation } from '@apollo/client';
+
+import { AuthContext } from '../context/auth';
+import { LOGIN_USER } from '../queries/user';
 
 const Login = () => {
+  const context = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const [show, setShow] = useState(false);
@@ -39,13 +45,29 @@ const Login = () => {
       password: '',
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      console.log(values);
+    onSubmit: async () => {
+      loginUser(values);
     },
   });
 
   const { errors, setErrors, touched, values, handleSubmit, getFieldProps } =
     formik;
+
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+    update(_, { data: { loginUser: userData } }) {
+      context.login(userData);
+    },
+    onCompleted() {
+      onClose();
+      toast.success('You have successfully logged in.', {
+        duration: 2500,
+      });
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.errors);
+    },
+    variables: values,
+  });
 
   return (
     <>
@@ -112,7 +134,12 @@ const Login = () => {
                     <Button variant="outline" mr={3} onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button colorScheme="blue" type="submit">
+                    <Button
+                      colorScheme="blue"
+                      type="submit"
+                      isLoading={loading}
+                      loadingText="Loging"
+                    >
                       Login
                     </Button>
                   </Box>

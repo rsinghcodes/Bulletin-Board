@@ -5,10 +5,10 @@ const initialState = {
   user: null,
 };
 
-if (localStorage.getItem('jwtToken')) {
-  const decodedToken = jwtDecode(localStorage.getItem('jwtToken'));
+if (localStorage.getItem('token')) {
+  const decodedToken = jwtDecode(localStorage.getItem('token'));
   if (decodedToken.exp * 1000 < Date.now()) {
-    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('token');
   } else {
     initialState.user = decodedToken;
   }
@@ -20,7 +20,7 @@ const AuthContext = createContext({
   logout: () => {},
 });
 
-function authReducer(state, action) {
+const authReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN':
       return {
@@ -35,23 +35,23 @@ function authReducer(state, action) {
     default:
       return state;
   }
-}
+};
 
-function AuthProvider(props) {
+const AuthProvider = (props) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  function login(userData) {
-    localStorage.setItem('jwtToken', userData.token);
+  const login = (userData) => {
+    localStorage.setItem('token', userData.token);
     dispatch({
       type: 'LOGIN',
       payload: userData,
     });
-  }
+  };
 
-  function logout() {
-    localStorage.removeItem('jwtToken');
+  const logout = () => {
+    localStorage.removeItem('token');
     dispatch({ type: 'LOGOUT' });
-  }
+  };
 
   return (
     <AuthContext.Provider
@@ -59,6 +59,6 @@ function AuthProvider(props) {
       {...props}
     />
   );
-}
+};
 
 export { AuthContext, AuthProvider };

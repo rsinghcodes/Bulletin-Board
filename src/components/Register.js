@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -19,9 +19,15 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { useMutation } from '@apollo/client';
+
+import { AuthContext } from '../context/auth';
+import { REGISTER_USER } from '../queries/user';
 
 const Register = () => {
+  const context = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
   const [show, setShow] = useState(false);
@@ -52,13 +58,29 @@ const Register = () => {
       repeat_password: '',
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      console.log(values);
+    onSubmit: async () => {
+      createUser(values);
     },
   });
 
   const { errors, setErrors, touched, values, handleSubmit, getFieldProps } =
     formik;
+
+  const [createUser, { loading }] = useMutation(REGISTER_USER, {
+    update(_, { data: { createUser } }) {
+      context.login(createUser);
+    },
+    onCompleted() {
+      onClose();
+      toast.success('You have successfully registered.', {
+        duration: 2500,
+      });
+    },
+    onError(err) {
+      setErrors(err.graphQLErrors[0].extensions.errors);
+    },
+    variables: values,
+  });
 
   return (
     <>
@@ -173,7 +195,12 @@ const Register = () => {
                     <Button variant="outline" mr={3} onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button colorScheme="blue" type="submit">
+                    <Button
+                      colorScheme="blue"
+                      type="submit"
+                      isLoading={loading}
+                      loadingText="Registering"
+                    >
                       Register
                     </Button>
                   </Box>
