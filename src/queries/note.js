@@ -51,4 +51,19 @@ const DELETE_NOTE = gql`
   }
 `;
 
-export { GET_NOTES_BY_USER, CREATE_NOTE, DELETE_NOTE };
+const UPDATE_BOARD_POSITION = gql`
+  mutation UpdateBoardPosition($contentId: ID!, $x: Int!, $y: Int!) {
+    updateBoardPosition(contentId: $contentId, defaultPos: { x: $x, y: $y }) {
+      id
+      color
+      content
+      createdAt
+      defaultPos {
+        x
+        y
+      }
+    }
+  }
+`;
+
+export { GET_NOTES_BY_USER, CREATE_NOTE, DELETE_NOTE, UPDATE_BOARD_POSITION };

@@ -1,108 +1,79 @@
-import * as Yup from 'yup';
-import { useEffect, useContext } from 'react';
-import {
-  Input,
-  Button,
-  Flex,
-  Box,
-  FormControl,
-  FormErrorMessage,
-  Text,
-} from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Input, Button, Flex, Box, CloseButton } from '@chakra-ui/react';
+import { v4 as uuidv4 } from 'uuid';
 import Draggable from 'react-draggable';
-import randomColor from 'randomcolor';
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { useFormik, Form, FormikProvider } from 'formik';
+var randomColor = require('randomcolor');
 
-import { AuthContext } from '../context/auth';
-import { CREATE_NOTE, GET_NOTES_BY_USER } from '../queries/note';
-import DeleteButton from '../components/DeleteButton';
+function Home() {
+  const [item, setItem] = useState('');
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem('items')) || []
+  );
+  const [isInvalid, setIsInvalid] = useState(false);
 
-const Home = () => {
-  const { user } = useContext(AuthContext);
-  const [getNotesByUserId, { loading, data }] = useLazyQuery(GET_NOTES_BY_USER);
-
-  const formik = useFormik({
-    initialValues: {
-      content: '',
-      color: '',
-      x: 0,
-      y: 20,
-    },
-    validationSchema: Yup.object().shape({
-      content: Yup.string().required('Content is required'),
-    }),
-    onSubmit: async () => {
-      createNote({
-        ...values,
-        ...(values.color = randomColor({ luminosity: 'light' })),
-      });
-    },
-  });
-
-  const { errors, setErrors, touched, values, handleSubmit, getFieldProps } =
-    formik;
-
-  const [createNote] = useMutation(CREATE_NOTE, {
-    update(client, { data }) {
-      const { getNotesByUserId } = client.readQuery({
-        query: GET_NOTES_BY_USER,
-      });
-
-      client.writeQuery({
-        query: GET_NOTES_BY_USER,
-        data: {
-          getNotesByUserId: [...getNotesByUserId, data.createNote],
-        },
-      });
-    },
-    onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.errors);
-    },
-    variables: values,
-  });
+  const newitem = () => {
+    if (item.trim() !== '') {
+      const newitem = {
+        id: uuidv4(),
+        item: item,
+        color: randomColor({ luminosity: 'light' }),
+        defaultPos: { x: 0, y: 20 },
+      };
+      setItems((items) => [...items, newitem]);
+      setItem('');
+    } else {
+      setIsInvalid(true);
+    }
+  };
 
   useEffect(() => {
-    getNotesByUserId();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+    localStorage.setItem('items', JSON.stringify(items));
+  }, [items]);
+
+  const updatePos = (data, index) => {
+    let newArray = [...items];
+    newArray[index].defaultPos = { x: data.x, y: data.y };
+    setItems(newArray);
+  };
+
+  const keyPress = (e) => {
+    var code = e.keyCode || e.which;
+    if (code === 13) {
+      newitem();
+    }
+  };
+
+  const deleteNote = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+  };
 
   return (
     <>
       <Box mt={3}>
-        <FormikProvider value={formik}>
-          <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <Flex>
-              <FormControl
-                isInvalid={Boolean(touched.content && errors.content)}
-              >
-                <Input
-                  name="content"
-                  errorBorderColor="crimson"
-                  {...getFieldProps('content')}
-                  placeholder="Write something on board"
-                  mr={3}
-                />
-                <FormErrorMessage>
-                  {touched.content && errors.content}
-                </FormErrorMessage>
-              </FormControl>
-              <Button colorScheme="teal" variant="solid" type="submit">
-                Save
-              </Button>
-            </Flex>
-          </Form>
-        </FormikProvider>
+        <Flex>
+          <Input
+            isInvalid={isInvalid}
+            errorBorderColor="crimson"
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+            placeholder="Write something on board"
+            mr={3}
+            onKeyPress={(e) => keyPress(e)}
+          />
+          <Button colorScheme="teal" variant="solid" onClick={newitem}>
+            Save
+          </Button>
+        </Flex>
       </Box>
-      {loading && <Text>Loading boards...</Text>}
-      {data?.getNotesByUserId.map((item) => {
+
+      {items.map((item, index) => {
         return (
           <Draggable
             key={item.id}
             defaultPosition={item.defaultPos}
-            // onStop={(e, data) => {
-            //   updatePos(data, index);
-            // }}
+            onStop={(e, data) => {
+              updatePos(data, index);
+            }}
           >
             <Box
               maxW="xs"
@@ -115,15 +86,15 @@ const Home = () => {
               style={{ cursor: 'move' }}
             >
               <Flex justify="flex-end">
-                <DeleteButton contentId={item.id} />
+                <CloseButton size="sm" onClick={(e) => deleteNote(item.id)} />
               </Flex>
-              <Flex justify="center">{`${item.content}`}</Flex>
+              <Flex justify="center">{`${item.item}`}</Flex>
             </Box>
           </Draggable>
         );
       })}
     </>
   );
-};
+}
 
 export default Home;

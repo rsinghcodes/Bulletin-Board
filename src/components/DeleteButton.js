@@ -1,7 +1,6 @@
 import React from 'react';
 import { useMutation } from '@apollo/client';
 import { CloseButton } from '@chakra-ui/react';
-import { toast } from 'react-hot-toast';
 
 import { DELETE_NOTE, GET_NOTES_BY_USER } from '../queries/note';
 
@@ -19,11 +18,6 @@ const DeleteButton = ({ contentId }) => {
             (content) => content.id !== data.deleteNote.id
           ),
         },
-      });
-    },
-    onCompleted() {
-      toast.success('Board deleted Successfully 🎉', {
-        duration: 2500,
       });
     },
     variables: { contentId },

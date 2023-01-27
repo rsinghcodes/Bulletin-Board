@@ -3,8 +3,10 @@ import { Container, Progress } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthProvider } from './context/auth';
+import PrivateRoute from './utils/PrivateRoute';
 import Header from './components/Header';
-const Home = lazy(() => import('./page/Home'));
+
+const LoggedInHome = lazy(() => import('./page/LoggedInHome'));
 
 function App() {
   return (
@@ -14,7 +16,14 @@ function App() {
         <Suspense fallback={<Progress size="xs" isIndeterminate />}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <LoggedInHome />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </BrowserRouter>
         </Suspense>
