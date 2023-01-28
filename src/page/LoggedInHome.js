@@ -129,6 +129,11 @@ const LoggedInHome = () => {
           </Form>
         </FormikProvider>
       </Box>
+      <Box w="100%" p="2" mt="2" borderWidth="1px" overflow="hidden">
+        <Text textAlign="center">
+          Adjust the position of the card by dragging.
+        </Text>
+      </Box>
       {loading && <Text>Loading boards...</Text>}
       {data?.getNotesByUserId.map((item) => {
         return (

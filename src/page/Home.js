@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Input, Button, Flex, Box, CloseButton } from '@chakra-ui/react';
+import { Input, Button, Flex, Box, CloseButton, Text } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
 import Draggable from 'react-draggable';
 import randomColor from 'randomcolor';
@@ -65,7 +65,11 @@ function Home() {
           </Button>
         </Flex>
       </Box>
-
+      <Box w="100%" p="2" mt="2" borderWidth="1px" overflow="hidden">
+        <Text textAlign="center">
+          Adjust the position of the card by dragging.
+        </Text>
+      </Box>
       {items.map((item, index) => {
         return (
           <Draggable

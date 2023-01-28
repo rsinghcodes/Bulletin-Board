@@ -12,7 +12,7 @@ import theme from './components/theme';
 import App from './App';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000',
+  uri: 'https://bulletinboard.onrender.com',
 });
 
 const authLink = setContext(() => {
