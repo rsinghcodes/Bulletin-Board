@@ -2,7 +2,7 @@
 
 ### Description
 
-A simple app to write anything on the board. The notes will be saved to localStorage so don't write anything confidential or private on it. Built for a react draggable tutorial.
+Bulletin Board is full stack [node.js](https://nodejs.org/) application, built for users to write anything on the board. The notes get saved to localStorage for non-logged in users & for logged in users, notes get saved into database.
 
 An app with dark mode and light mode feature.
 
@@ -21,10 +21,16 @@ An app with dark mode and light mode feature.
 
 And many more, be creative with it!
 
-### :hammer: Tech Stack
+### :hammer: 🚧 Technology Stack Used
 
-<p><img height="25" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png" />
-<img height="25" src="https://user-images.githubusercontent.com/54095539/120929781-09063680-c708-11eb-864d-8f586ef91fec.png">
-</p>
+- **Server Enviornment** - Node.js, TypeScript
+- **DevOps** - Docker
+- **For APIs** - GraphQL in conjunction with Apollo Server
+- **Frontend** - React.js, Chakra UI
+- **Database** - MongoDB in conjunction with Mongoose
+- **Cloud database service** - MongoDB Atlas
+- **Deployment** - Render (Backend) & Netlify (Frontend)
 
-[Live Site](https://boardbulletin.netlify.app/)
+## :satellite: Project Deployment
+
+Project has been deployed [here!](https://boardbulletin.netlify.app/)
