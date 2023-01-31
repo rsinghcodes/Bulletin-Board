@@ -3,6 +3,8 @@ import { Input, Button, Flex, Box, CloseButton, Text } from '@chakra-ui/react';
 import { v4 as uuidv4 } from 'uuid';
 import Draggable from 'react-draggable';
 import randomColor from 'randomcolor';
+// components
+import Header from '../components/Header';
 
 function Home() {
   const [content, setContent] = useState('');
@@ -49,6 +51,7 @@ function Home() {
 
   return (
     <>
+      <Header />
       <Box mt={3}>
         <Flex>
           <Input

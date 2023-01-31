@@ -4,15 +4,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { AuthProvider } from './context/auth';
 import PrivateRoute from './utils/PrivateRoute';
-import Header from './components/Header';
 
 const LoggedInHome = lazy(() => import('./page/LoggedInHome'));
+const NotFound = lazy(() => import('./page/NotFound'));
 
 function App() {
   return (
     <AuthProvider>
       <Container maxW="container.lg">
-        <Header />
         <Suspense fallback={<Progress size="xs" isIndeterminate />}>
           <BrowserRouter>
             <Routes>
@@ -24,6 +23,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </Suspense>

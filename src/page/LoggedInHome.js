@@ -20,7 +20,9 @@ import {
   GET_NOTES_BY_USER,
   UPDATE_BOARD_POSITION,
 } from '../queries/note';
+// components
 import DeleteButton from '../components/DeleteButton';
+import Header from '../components/Header';
 
 const LoggedInHome = () => {
   const { user } = useContext(AuthContext);
@@ -103,6 +105,7 @@ const LoggedInHome = () => {
 
   return (
     <>
+      <Header />
       <Box mt={3}>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
